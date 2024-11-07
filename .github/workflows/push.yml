@@ -41,6 +41,9 @@ jobs:
     if: ${{ needs.filter.outputs.matrix != '{"include":[]}' }}
     strategy:
       matrix: ${{ fromJson(needs.filter.outputs.matrix) }}
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -74,6 +77,7 @@ jobs:
 
       - name: Push
         run: |
-          for file in ${{ matrix.directory }}/*.gz; do
-            aws s3 cp  s3://${{ secrets.BUCKET_NAME }}/$file
-          done
+          aws s3 cp . s3://${{ secrets.BUCKET_NAME }}/${{ matrix.directory }}/ \
+            --recursive \
+            --exclude "*" \
+            --include "*.gz"
