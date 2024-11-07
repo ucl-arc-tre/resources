@@ -2,6 +2,8 @@ name: Push
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
   filter:
@@ -36,11 +38,14 @@ jobs:
 
   push:
     runs-on: ubuntu-latest
-    environment: tre
+    environment: ${{ github.event_name == 'push' && 'tre-staging' || '' }} 
     needs: filter
     if: ${{ needs.filter.outputs.matrix != '{"include":[]}' }}
     strategy:
       matrix: ${{ fromJson(needs.filter.outputs.matrix) }}
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -67,13 +72,16 @@ jobs:
           ./build.sh
 
       - uses: aws-actions/configure-aws-credentials@v4
+        if: github.event_name == 'push'
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_NAME }}
           role-session-name: ${{ secrets.AWS_ROLE_NAME }}
 
       - name: Push
+        if: github.event_name == 'push'
         run: |
-          for file in ${{ matrix.directory }}/*.gz; do
-            aws s3 cp  s3://${{ secrets.BUCKET_NAME }}/$file
-          done
+          aws s3 cp . s3://${{ secrets.BUCKET_NAME }}/${{ matrix.directory }}/ \
+            --recursive \
+            --exclude "*" \
+            --include "*.gz"
