@@ -36,7 +36,7 @@ jobs:
 
   push:
     runs-on: ubuntu-latest
-    environment: tre 
+    environment: tre
     needs: filter
     if: ${{ needs.filter.outputs.matrix != '{"include":[]}' }}
     strategy:
