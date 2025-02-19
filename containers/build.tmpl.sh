@@ -8,5 +8,5 @@ docker build \
   {{ .Context }}
 
 docker save \
-  --output {{ .FileName }} \
-  {{ .Image }}
+  {{ .Image }} \
+  | gzip > {{ .FileName }}
