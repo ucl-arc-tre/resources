@@ -1,8 +1,6 @@
 module github.com/ucl-arc-tre/global
 
-go 1.23.0
-
-toolchain go1.24.2
+go 1.24.0
 
 require (
 	github.com/go-git/go-git/v5 v5.16.0
@@ -28,9 +26,7 @@ require (
 	github.com/skeema/knownhosts v1.3.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/tools v0.32.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
