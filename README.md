@@ -9,7 +9,7 @@ Docker containers defined in [containers/](./containers/) are built and saved as
 and pushed into the TRE on merge into main. Within TRE desktops they are available under
 
 ```
-~resources
+~/resources
 └── containers
     └── ...
 ```
