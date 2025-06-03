@@ -6,12 +6,12 @@ these **must** be public and non-sensitive.
 ## Containers
 
 Docker containers defined in [containers/](./containers/) are built and saved as compressed archives
-and pushed into the TRE on merge into main. Within the TRE desktop they are available under
+and pushed into the TRE on merge into main. Within TRE desktops they are available under
 
 ```
-~resources
+~/resources
 └── containers
-    └── chme0039-pytorch-basic
+    └── ...
 ```
 
 ## 🤝 Contributing
