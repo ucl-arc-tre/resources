@@ -7,9 +7,8 @@ FROM mathworks/matlab:${MATLAB_RELEASE}
 RUN pipx upgrade matlab-proxy
 
 ARG MATLAB_RELEASE
-
 # ADDITIONAL_PRODUCTS must be a space seperated list of mpm installable toolboxes
-ARG ADDITIONAL_PRODUCTS=""
+ARG ADDITIONAL_PRODUCTS="Bioinformatics_Toolbox"
 
 USER root
 
@@ -36,7 +35,7 @@ RUN wget -q https://www.mathworks.com/mpm/glnxa64/mpm \
     && sudo HOME=${HOME} ./mpm install \
         --destination=${EXISTING_MATLAB_LOCATION} \
         --release=${MATLAB_RELEASE} \
-        --products ${ADDITIONAL_PRODUCTS} \
+        --products MATLAB ${ADDITIONAL_PRODUCTS} \
     || (echo "MPM Installation Failure. See below for more information:" && cat /tmp/mathworks_root.log && false) \
     && sudo rm -rf mpm /tmp/mathworks_root.log ${HOME}/.MathWorks
 
