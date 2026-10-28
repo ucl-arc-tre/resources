@@ -7,8 +7,9 @@ FROM mathworks/matlab:${MATLAB_RELEASE}
 RUN pipx upgrade matlab-proxy
 
 ARG MATLAB_RELEASE
-# ADDITIONAL_PRODUCTS must be a space seperated list of mpm installable toolboxes
-ARG ADDITIONAL_PRODUCTS="Bioinformatics_Toolbox"
+# ADDITIONAL_PRODUCTS must be a space seperated list of mpm installable toolboxes.
+# Leave unset/empty to install MATLAB only, with no additional products.
+ARG ADDITIONAL_PRODUCTS
 
 USER root
 
@@ -29,15 +30,17 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 # so that mpm can set the correct root folder for the support packages
 WORKDIR /tmp
 USER matlab
-RUN wget -q https://www.mathworks.com/mpm/glnxa64/mpm \
-    && chmod +x mpm \
-    && EXISTING_MATLAB_LOCATION=$(dirname $(dirname $(readlink -f $(which matlab)))) \
-    && sudo HOME=${HOME} ./mpm install \
-        --destination=${EXISTING_MATLAB_LOCATION} \
-        --release=${MATLAB_RELEASE} \
-        --products MATLAB ${ADDITIONAL_PRODUCTS} \
-    || (echo "MPM Installation Failure. See below for more information:" && cat /tmp/mathworks_root.log && false) \
-    && sudo rm -rf mpm /tmp/mathworks_root.log ${HOME}/.MathWorks
+RUN if [ -n "${ADDITIONAL_PRODUCTS}" ]; then \
+        wget -q https://www.mathworks.com/mpm/glnxa64/mpm \
+        && chmod +x mpm \
+        && EXISTING_MATLAB_LOCATION=$(dirname $(dirname $(readlink -f $(which matlab)))) \
+        && sudo HOME=${HOME} ./mpm install \
+            --destination=${EXISTING_MATLAB_LOCATION} \
+            --release=${MATLAB_RELEASE} \
+            --products ${ADDITIONAL_PRODUCTS} \
+        || (echo "MPM Installation Failure. See below for more information:" && cat /tmp/mathworks_root.log && false); \
+        sudo rm -rf mpm /tmp/mathworks_root.log ${HOME}/.MathWorks; \
+    fi
 
 # When running the container a license file can be mounted,
 # or a license server can be provided as an environment variable.
